@@ -44,8 +44,11 @@ class WinesController < ApplicationController
     respond_to do |format|
       if @wine.update(name: wine_params[:name])
         wine_params[:strain_ids].reject(&:empty?).each_with_index do |strain_id, index|
-          @percentage_list = wine_params[:percentage].reject(&:empty?)
+            wine_params[:strain_ids].reject(&:empty?).each_with_index do |id, index|
+              @percentage_list = wine_params[:percentage].reject(&:empty?)
+              @wine_strain = WineStrain.create(wine_id: @wine.id, strain_id: strain_id, percentage: @percentage_list[index])
         end
+      end
         format.html { redirect_to @wine, notice: "Wine was successfully updated." }
         format.json { render :show, status: :ok, location: @wine }
       else
@@ -54,6 +57,7 @@ class WinesController < ApplicationController
       end
     end
   end
+
 
   # DELETE /wines/1 or /wines/1.json
   def destroy
